@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import { Noto_Sans_TC } from 'next/font/google';
@@ -36,7 +37,10 @@ export default function RootLayout({ children }) {
       className={`${GeistSans.variable} ${GeistMono.variable} ${notoSansTC.variable}`}
       suppressHydrationWarning
     >
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
