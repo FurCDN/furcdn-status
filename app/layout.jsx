@@ -12,13 +12,29 @@ const notoSansTC = Noto_Sans_TC({
 });
 
 export const metadata = {
+  metadataBase: new URL('https://status.furcdn.us'),
   title: 'FurCDN Status',
-  description: 'FurCDN service status — real-time monitoring',
-  robots: { index: false, follow: false },
+  description: 'FurCDN 服務即時狀態 — Real-time service status powered by UptimeRobot.',
+  alternates: { canonical: '/' },
   icons: {
     icon: 'https://oss.furcdn.us/furcdn_favicon.svg',
     shortcut: 'https://oss.furcdn.us/furcdn_favicon.svg',
     apple: 'https://oss.furcdn.us/furcdn_favicon.svg',
+  },
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'FurCDN Status',
+  alternateName: 'FurCDN 狀態頁',
+  url: 'https://status.furcdn.us',
+  description: 'FurCDN 服務即時狀態頁 — Real-time service status.',
+  inLanguage: 'zh-Hant',
+  publisher: {
+    '@type': 'Organization',
+    name: 'SLOWSPEED NETWORK LLC.',
+    url: 'https://www.furcdn.us',
   },
 };
 
@@ -38,6 +54,10 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <body className="font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         {children}
         <Analytics />
       </body>
