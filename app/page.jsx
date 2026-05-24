@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { headers } from 'next/headers';
 import {
   HISTORY_DAYS,
   buildDailyBars,
@@ -14,6 +15,27 @@ import { UptimeBars } from '@/components/uptime-bars';
 export const revalidate = 30;
 
 const REFRESH_SECONDS = 60;
+
+const eventDateFmt = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+
+async function fetchEvents() {
+  try {
+    const h = await headers();
+    const host = h.get('host');
+    const proto = h.get('x-forwarded-proto') || 'https';
+    const base = host ? `${proto}://${host}` : '';
+    const res = await fetch(`${base}/api/event`, { next: { revalidate: 30 } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.events || [];
+  } catch {
+    return [];
+  }
+}
 
 const dotColors = {
   up: 'bg-emerald-500',
@@ -47,6 +69,8 @@ export default async function StatusPage() {
     errorMessage = e?.message || 'Unknown error';
   }
 
+  const events = await fetchEvents();
+
   const overall = errorMessage
     ? { cls: 'down', text: 'Unable to load status' }
     : overallStatus(monitors);
@@ -78,6 +102,30 @@ export default async function StatusPage() {
             </li>
           ))}
         </ul>
+      )}
+
+      {events.length > 0 && (
+        <section className="mt-12">
+          <h2 className="mb-4 text-xs text-zinc-500">事件記錄</h2>
+          <ul className="divide-y divide-zinc-800/70 border-y border-zinc-800/70">
+            {events.map((ev, i) => (
+              <li key={i} className="py-4">
+                <div className="mb-1 flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
+                  <span className="text-sm text-zinc-100">{ev.title}</span>
+                  <time
+                    dateTime={ev.date}
+                    className="shrink-0 font-mono text-[11px] text-zinc-500"
+                  >
+                    {eventDateFmt.format(new Date(`${ev.date}T00:00:00`))}
+                  </time>
+                </div>
+                <p className="text-xs leading-relaxed text-zinc-400 sm:text-[13px]">
+                  {ev.description}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       <footer className="mt-16 flex flex-col items-center gap-1 text-center text-xs text-zinc-600">
