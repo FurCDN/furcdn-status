@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { headers } from 'next/headers';
 import {
   HISTORY_DAYS,
   buildDailyBars,
@@ -8,6 +7,7 @@ import {
   overallStatus,
   statusInfo,
 } from '@/lib/uptimerobot';
+import { getEvents } from '@/lib/events';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { UpdatedTime } from '@/components/updated-time';
 import { UptimeBars } from '@/components/uptime-bars';
@@ -21,21 +21,6 @@ const eventDateFmt = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
 });
-
-async function fetchEvents() {
-  try {
-    const h = await headers();
-    const host = h.get('host');
-    const proto = h.get('x-forwarded-proto') || 'https';
-    const base = host ? `${proto}://${host}` : '';
-    const res = await fetch(`${base}/api/event`, { next: { revalidate: 30 } });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.events || [];
-  } catch {
-    return [];
-  }
-}
 
 const dotColors = {
   up: 'bg-emerald-500',
@@ -69,7 +54,7 @@ export default async function StatusPage() {
     errorMessage = e?.message || 'Unknown error';
   }
 
-  const events = await fetchEvents();
+  const events = getEvents();
 
   const overall = errorMessage
     ? { cls: 'down', text: 'Unable to load status' }
