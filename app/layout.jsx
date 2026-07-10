@@ -1,8 +1,9 @@
 import { Analytics } from '@vercel/analytics/next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
-import { Noto_Sans_TC } from 'next/font/google';
+import { Noto_Sans_JP, Noto_Sans_TC } from 'next/font/google';
 import './globals.css';
+import { getLocale } from '@/lib/locale';
 
 const notoSansTC = Noto_Sans_TC({
   weight: ['400', '500', '700'],
@@ -10,6 +11,19 @@ const notoSansTC = Noto_Sans_TC({
   display: 'swap',
   variable: '--font-noto-sans-tc',
 });
+
+const notoSansJP = Noto_Sans_JP({
+  weight: ['400', '500', '700'],
+  preload: false,
+  display: 'swap',
+  variable: '--font-noto-sans-jp',
+});
+
+const HTML_LANG = {
+  'zh-Hant': 'zh-Hant',
+  en: 'en',
+  ja: 'ja',
+};
 
 export const metadata = {
   metadataBase: new URL('https://status.furcdn.us'),
@@ -46,11 +60,12 @@ export const viewport = {
   colorScheme: 'dark',
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const locale = await getLocale();
   return (
     <html
-      lang="zh-Hant"
-      className={`${GeistSans.variable} ${GeistMono.variable} ${notoSansTC.variable}`}
+      lang={HTML_LANG[locale] || 'zh-Hant'}
+      className={`${GeistSans.variable} ${GeistMono.variable} ${notoSansTC.variable} ${notoSansJP.variable}`}
       suppressHydrationWarning
     >
       <body className="font-sans">

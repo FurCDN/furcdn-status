@@ -8,19 +8,16 @@ import {
   statusInfo,
 } from '@/lib/uptimerobot';
 import { getEvents } from '@/lib/events';
+import { getLocale } from '@/lib/locale';
+import { INTL_LOCALES, getDict } from '@/lib/i18n';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { UpdatedTime } from '@/components/updated-time';
 import { UptimeBars } from '@/components/uptime-bars';
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 export const revalidate = 30;
 
 const REFRESH_SECONDS = 60;
-
-const eventDateFmt = new Intl.DateTimeFormat('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-});
 
 const dotColors = {
   up: 'bg-emerald-500',
@@ -36,6 +33,13 @@ const statusTextColors = {
   unknown: 'text-amber-400',
 };
 
+const OVERALL_KEY = {
+  'All systems operational': 'up',
+  'All monitors paused': 'paused',
+  'Major outage': 'down_major',
+  'Partial outage': 'down_partial',
+};
+
 function cleanHost(url) {
   if (!url) return null;
   try {
@@ -46,6 +50,16 @@ function cleanHost(url) {
 }
 
 export default async function StatusPage() {
+  const locale = await getLocale();
+  const t = getDict(locale);
+  const intlLocale = INTL_LOCALES[locale];
+
+  const eventDateFmt = new Intl.DateTimeFormat(intlLocale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+
   let monitors = [];
   let errorMessage = null;
   try {
@@ -56,9 +70,17 @@ export default async function StatusPage() {
 
   const events = getEvents();
 
-  const overall = errorMessage
-    ? { cls: 'down', text: 'Unable to load status' }
+  const overallRaw = errorMessage
+    ? { cls: 'down', text: t.overall.unable }
     : overallStatus(monitors);
+
+  const overall = errorMessage
+    ? overallRaw
+    : {
+        cls: overallRaw.cls,
+        text: t.overall[OVERALL_KEY[overallRaw.text]] || overallRaw.text,
+      };
+
   const updatedIso = new Date().toISOString();
 
   return (
@@ -78,12 +100,12 @@ export default async function StatusPage() {
       {errorMessage ? (
         <p className="text-sm text-zinc-500">{errorMessage}</p>
       ) : monitors.length === 0 ? (
-        <p className="text-sm text-zinc-500">No monitors configured.</p>
+        <p className="text-sm text-zinc-500">{t.noMonitors}</p>
       ) : (
         <ul className="divide-y divide-zinc-800/70 border-y border-zinc-800/70">
           {monitors.map((m) => (
             <li key={m.id}>
-              <MonitorRow monitor={m} />
+              <MonitorRow monitor={m} t={t} />
             </li>
           ))}
         </ul>
@@ -91,7 +113,7 @@ export default async function StatusPage() {
 
       {events.length > 0 && (
         <section className="mt-12">
-          <h2 className="mb-4 text-xs text-zinc-500">事件記錄</h2>
+          <h2 className="mb-4 text-xs text-zinc-500">{t.eventsTitle}</h2>
           <ul className="divide-y divide-zinc-800/70 border-y border-zinc-800/70">
             {events.map((ev, i) => (
               <li key={i} className="py-4">
@@ -113,9 +135,9 @@ export default async function StatusPage() {
         </section>
       )}
 
-      <footer className="mt-16 flex flex-col items-center gap-1 text-center text-xs text-zinc-600">
+      <footer className="mt-16 flex flex-col items-center gap-3 text-center text-xs text-zinc-600">
         <p>
-          Powered by{' '}
+          {t.poweredBy}{' '}
           <a
             href="https://uptimerobot.com"
             target="_blank"
@@ -124,17 +146,18 @@ export default async function StatusPage() {
           >
             UptimeRobot
           </a>
-          {' · '}auto-refresh {REFRESH_SECONDS}s
+          {' · '}
+          {t.autoRefresh(REFRESH_SECONDS)}
         </p>
         <p>
           © 2023-2026{' '}
           <span className="font-medium text-zinc-300">
             SLOWSPEED NETWORK LLC.
           </span>{' '}
-          版權所有
+          {t.copyright}
         </p>
         <p>
-          由{' '}
+          {t.drivenBy}{' '}
           <a
             href="https://langya.io"
             target="_blank"
@@ -142,21 +165,24 @@ export default async function StatusPage() {
             className="link-underline font-medium text-zinc-300"
           >
             langya.io
-          </a>{' '}
-          驅動
+          </a>
         </p>
+        <div className="mt-2">
+          <LanguageSwitcher current={locale} label={t.langMenuLabel} />
+        </div>
       </footer>
     </main>
   );
 }
 
-function MonitorRow({ monitor }) {
+function MonitorRow({ monitor, t }) {
   const s = statusInfo(monitor.status);
   const bars = buildDailyBars(monitor);
   const ratios = (monitor.custom_uptime_ratio || '').split('-');
   const r30 = formatRatio(ratios[2]);
   const r90 = formatRatio(ratios[3]);
   const host = cleanHost(monitor.url);
+  const statusText = t.monitor[s.text] || s.text;
 
   return (
     <div className="py-5">
@@ -172,20 +198,20 @@ function MonitorRow({ monitor }) {
           )}
         </div>
         <span className={clsx('shrink-0 pt-0.5 text-xs', statusTextColors[s.cls])}>
-          {s.text}
+          {statusText}
         </span>
       </div>
 
       <UptimeBars bars={bars} />
 
       <div className="mt-2.5 flex items-center justify-between text-xs text-zinc-500">
-        <span>{HISTORY_DAYS}d ago</span>
+        <span>{t.daysAgo(HISTORY_DAYS)}</span>
         <span className="text-zinc-400">
-          {r30} <span className="text-zinc-600">30d</span>
+          {r30} <span className="text-zinc-600">{t.days(30)}</span>
           <span className="mx-2 text-zinc-700">·</span>
-          {r90} <span className="text-zinc-600">90d</span>
+          {r90} <span className="text-zinc-600">{t.days(90)}</span>
         </span>
-        <span>Today</span>
+        <span>{t.today}</span>
       </div>
     </div>
   );
