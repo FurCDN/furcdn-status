@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
@@ -22,7 +22,8 @@
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@typescript/native-preview": "^7.0.0-dev.20260707.2",
     "tailwindcss": "^4.0.0",
-    "typescript": "7.0.2"
+    "typescript": "^5.9.3"
   }
 }
