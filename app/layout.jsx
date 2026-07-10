@@ -21,6 +21,7 @@ const notoSansJP = Noto_Sans_JP({
 
 const HTML_LANG = {
   'zh-Hant': 'zh-Hant',
+  yue: 'yue-Hant-HK',
   en: 'en',
   ja: 'ja',
 };

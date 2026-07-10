@@ -7,9 +7,9 @@ import {
   overallStatus,
   statusInfo,
 } from '@/lib/uptimerobot';
-import { getEvents } from '@/lib/events';
+import { getEvents, localizeEvent } from '@/lib/events';
 import { getLocale } from '@/lib/locale';
-import { INTL_LOCALES, getDict } from '@/lib/i18n';
+import { DATE_LOCALES, getDict } from '@/lib/i18n';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { UpdatedTime } from '@/components/updated-time';
 import { UptimeBars } from '@/components/uptime-bars';
@@ -52,9 +52,7 @@ function cleanHost(url) {
 export default async function StatusPage() {
   const locale = await getLocale();
   const t = getDict(locale);
-  const intlLocale = INTL_LOCALES[locale];
-
-  const eventDateFmt = new Intl.DateTimeFormat(intlLocale, {
+  const eventDateFmt = new Intl.DateTimeFormat(DATE_LOCALES[locale], {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -68,7 +66,7 @@ export default async function StatusPage() {
     errorMessage = e?.message || 'Unknown error';
   }
 
-  const events = getEvents();
+  const events = getEvents().map((ev) => localizeEvent(ev, locale));
 
   const overallRaw = errorMessage
     ? { cls: 'down', text: t.overall.unable }

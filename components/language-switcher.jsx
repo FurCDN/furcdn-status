@@ -9,6 +9,7 @@ const FLAG_BASE =
 
 const OPTIONS = [
   { code: 'zh-Hant', label: '繁體中文', flag: 'tw' },
+  { code: 'yue', label: '粵語', flag: 'hk' },
   { code: 'en', label: 'English', flag: 'gb' },
   { code: 'ja', label: '日本語', flag: 'jp' },
 ];
