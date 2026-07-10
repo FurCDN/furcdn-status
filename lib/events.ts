@@ -18,17 +18,17 @@ export const events: RawEvent[] = [
   {
     date: '2026-07-09',
     title: {
-      'zh-Hant': 'OVH VPS 維護導致停機',
-      yue: 'OVH VPS 維護導致停機',
-      en: 'Downtime caused by OVH VPS maintenance',
-      ja: 'OVH VPS メンテナンスによるダウンタイム',
+      'zh-Hant': 'OVH 獨服維護導致停機',
+      yue: 'OVH 獨服維護導致停機',
+      en: 'Downtime caused by OVH dedicated server maintenance',
+      ja: 'OVH 専用サーバーメンテナンスによるダウンタイム',
     },
     description: {
       'zh-Hant':
-        'OVH 機房電力與冷卻基礎設施維護導致 VPS 重啟，停機約 1 小時 1 分鐘。',
-      yue: 'OVH 機房嘅電力同冷卻設施維護令 VPS 重啟咗，停機大約 1 個鐘 1 分鐘。',
-      en: 'OVH datacenter power and cooling infrastructure maintenance caused the VPS to reboot, resulting in about 1 hour 1 minute of downtime.',
-      ja: 'OVH データセンターの電源および冷却設備のメンテナンスにより VPS が再起動し、約 1 時間 1 分のダウンタイムが発生しました。',
+        'OVH 機房電力與冷卻基礎設施維護導致獨服重啟，停機約一小時，已接入的網站不受影響。',
+      yue: 'OVH 機房嘅電力同冷卻設施維護令獨服重啟咗，停機大約一個鐘，已經接入嘅網站唔受影響。',
+      en: 'OVH datacenter power and cooling infrastructure maintenance caused the dedicated server to reboot, resulting in about one hour of downtime. Onboarded sites were not affected.',
+      ja: 'OVH データセンターの電源および冷却設備のメンテナンスにより専用サーバーが再起動し、約 1 時間のダウンタイムが発生しました。既に接続済みのサイトには影響ありません。',
     },
   },
   {
