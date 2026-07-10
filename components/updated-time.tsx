@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 
-export function UpdatedTime({ iso }) {
+interface UpdatedTimeProps {
+  iso: string;
+}
+
+export function UpdatedTime({ iso }: UpdatedTimeProps) {
   const [text, setText] = useState('');
 
   useEffect(() => {

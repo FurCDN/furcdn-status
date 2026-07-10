@@ -1,4 +1,20 @@
-export const events = [
+import type { Locale } from './i18n';
+
+type LocalizedString = Record<Locale, string>;
+
+export interface RawEvent {
+  date: string;
+  title: LocalizedString;
+  description: LocalizedString;
+}
+
+export interface LocalizedEvent {
+  date: string;
+  title: string;
+  description: string;
+}
+
+export const events: RawEvent[] = [
   {
     date: '2026-07-09',
     title: {
@@ -63,17 +79,15 @@ export const events = [
   },
 ];
 
-export function getEvents() {
+export function getEvents(): RawEvent[] {
   return [...events].sort((a, b) => b.date.localeCompare(a.date));
 }
 
-function pickText(field, locale) {
-  if (typeof field === 'string') return field;
-  if (!field) return '';
-  return field[locale] || field['zh-Hant'] || Object.values(field)[0] || '';
+function pickText(field: LocalizedString, locale: Locale): string {
+  return field[locale] || field['zh-Hant'] || '';
 }
 
-export function localizeEvent(event, locale) {
+export function localizeEvent(event: RawEvent, locale: Locale): LocalizedEvent {
   return {
     date: event.date,
     title: pickText(event.title, locale),

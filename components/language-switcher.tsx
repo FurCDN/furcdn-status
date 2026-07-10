@@ -3,25 +3,37 @@
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
+import type { Locale } from '@/lib/i18n';
 
 const FLAG_BASE =
   'https://cdn.jsdelivr.net/gh/HatScripts/circle-flags@gh-pages/flags';
 
-const OPTIONS = [
+interface Option {
+  code: Locale;
+  label: string;
+  flag: string;
+}
+
+const OPTIONS: Option[] = [
   { code: 'zh-Hant', label: '繁體中文', flag: 'tw' },
   { code: 'yue', label: '粵語', flag: 'hk' },
   { code: 'en', label: 'English', flag: 'gb' },
   { code: 'ja', label: '日本語', flag: 'jp' },
 ];
 
+interface LanguageSwitcherProps {
+  current: Locale;
+  label: string;
+}
+
 const COOKIE_NAME = 'furcdn_locale';
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
-export function LanguageSwitcher({ current, label }) {
+export function LanguageSwitcher({ current, label }: LanguageSwitcherProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const setLocale = (code) => {
+  const setLocale = (code: Locale) => {
     if (code === current) return;
     document.cookie = `${COOKIE_NAME}=${code}; path=/; max-age=${ONE_YEAR}; SameSite=Lax`;
     startTransition(() => router.refresh());

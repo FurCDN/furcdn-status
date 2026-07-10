@@ -6,10 +6,14 @@ import {
   formatRatio,
   overallStatus,
   statusInfo,
+  type Monitor,
+  type OverallStatus,
+  type OverallText,
+  type StatusClass,
 } from '@/lib/uptimerobot';
 import { getEvents, localizeEvent } from '@/lib/events';
 import { getLocale } from '@/lib/locale';
-import { DATE_LOCALES, getDict } from '@/lib/i18n';
+import { DATE_LOCALES, getDict, type Dict } from '@/lib/i18n';
 import { AutoRefresh } from '@/components/auto-refresh';
 import { UpdatedTime } from '@/components/updated-time';
 import { UptimeBars } from '@/components/uptime-bars';
@@ -19,34 +23,39 @@ export const revalidate = 30;
 
 const REFRESH_SECONDS = 60;
 
-const dotColors = {
+const dotColors: Record<StatusClass, string> = {
   up: 'bg-emerald-500',
   down: 'bg-red-500',
   paused: 'bg-zinc-500',
   unknown: 'bg-amber-500',
 };
 
-const statusTextColors = {
+const statusTextColors: Record<StatusClass, string> = {
   up: 'text-emerald-400',
   down: 'text-red-400',
   paused: 'text-zinc-500',
   unknown: 'text-amber-400',
 };
 
-const OVERALL_KEY = {
+const OVERALL_KEY: Record<OverallText, keyof Dict['overall']> = {
   'All systems operational': 'up',
   'All monitors paused': 'paused',
   'Major outage': 'down_major',
   'Partial outage': 'down_partial',
 };
 
-function cleanHost(url) {
+function cleanHost(url: string | undefined): string | null {
   if (!url) return null;
   try {
     return new URL(url).host;
   } catch {
     return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
   }
+}
+
+interface Overall {
+  cls: StatusClass;
+  text: string;
 }
 
 export default async function StatusPage() {
@@ -58,26 +67,22 @@ export default async function StatusPage() {
     day: 'numeric',
   });
 
-  let monitors = [];
-  let errorMessage = null;
+  let monitors: Monitor[] = [];
+  let errorMessage: string | null = null;
   try {
     monitors = await fetchMonitors();
   } catch (e) {
-    errorMessage = e?.message || 'Unknown error';
+    errorMessage = (e as Error)?.message || 'Unknown error';
   }
 
   const events = getEvents().map((ev) => localizeEvent(ev, locale));
 
-  const overallRaw = errorMessage
+  const overall: Overall = errorMessage
     ? { cls: 'down', text: t.overall.unable }
-    : overallStatus(monitors);
-
-  const overall = errorMessage
-    ? overallRaw
-    : {
-        cls: overallRaw.cls,
-        text: t.overall[OVERALL_KEY[overallRaw.text]] || overallRaw.text,
-      };
+    : (() => {
+        const raw: OverallStatus = overallStatus(monitors);
+        return { cls: raw.cls, text: t.overall[OVERALL_KEY[raw.text]] };
+      })();
 
   const updatedIso = new Date().toISOString();
 
@@ -173,7 +178,12 @@ export default async function StatusPage() {
   );
 }
 
-function MonitorRow({ monitor, t }) {
+interface MonitorRowProps {
+  monitor: Monitor;
+  t: Dict;
+}
+
+function MonitorRow({ monitor, t }: MonitorRowProps) {
   const s = statusInfo(monitor.status);
   const bars = buildDailyBars(monitor);
   const ratios = (monitor.custom_uptime_ratio || '').split('-');

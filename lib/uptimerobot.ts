@@ -5,7 +5,63 @@ const API_URL = 'https://api.uptimerobot.com/v2/getMonitors';
 export const HISTORY_DAYS = 90;
 const DAY_MS = 86_400_000;
 
-export async function fetchMonitors({ revalidate = 30 } = {}) {
+export type StatusClass = 'up' | 'down' | 'paused' | 'unknown';
+export type BarClass = 'up' | 'down' | 'partial' | 'na';
+export type MonitorStatusText =
+  | 'Operational'
+  | 'Degraded'
+  | 'Down'
+  | 'Paused'
+  | 'Pending'
+  | 'Unknown';
+
+export interface MonitorLog {
+  type: number;
+  datetime: number;
+  duration?: number;
+}
+
+export interface Monitor {
+  id: number;
+  friendly_name?: string;
+  url?: string;
+  status: number;
+  create_datetime?: number;
+  custom_uptime_ratio?: string;
+  logs?: MonitorLog[];
+}
+
+export interface DailyBar {
+  cls: BarClass;
+  timestamp: number;
+  downSec: number;
+}
+
+export interface StatusInfo {
+  cls: StatusClass;
+  text: MonitorStatusText;
+}
+
+export type OverallText =
+  | 'All systems operational'
+  | 'All monitors paused'
+  | 'Major outage'
+  | 'Partial outage';
+
+export interface OverallStatus {
+  cls: StatusClass;
+  text: OverallText;
+}
+
+interface UptimeRobotResponse {
+  stat: string;
+  error?: { message?: string; type?: string };
+  monitors?: Monitor[];
+}
+
+export async function fetchMonitors({
+  revalidate = 30,
+}: { revalidate?: number } = {}): Promise<Monitor[]> {
   const apiKey = process.env.UPTIMEROBOT_API_KEY;
   if (!apiKey) {
     throw new Error('UPTIMEROBOT_API_KEY is not set');
@@ -33,14 +89,14 @@ export async function fetchMonitors({ revalidate = 30 } = {}) {
   });
 
   if (!res.ok) throw new Error(`UptimeRobot HTTP ${res.status}`);
-  const data = await res.json();
+  const data = (await res.json()) as UptimeRobotResponse;
   if (data.stat !== 'ok') {
     throw new Error(data.error?.message || data.error?.type || 'UptimeRobot API error');
   }
   return data.monitors || [];
 }
 
-export function statusInfo(status) {
+export function statusInfo(status: number): StatusInfo {
   switch (status) {
     case 0: return { cls: 'paused', text: 'Paused' };
     case 1: return { cls: 'unknown', text: 'Pending' };
@@ -51,7 +107,7 @@ export function statusInfo(status) {
   }
 }
 
-export function overallStatus(monitors) {
+export function overallStatus(monitors: Monitor[]): OverallStatus {
   const active = monitors.filter((m) => m.status !== 0);
   if (active.length === 0) return { cls: 'paused', text: 'All monitors paused' };
   const down = active.filter((m) => m.status === 8 || m.status === 9);
@@ -60,11 +116,11 @@ export function overallStatus(monitors) {
   return { cls: 'down', text: 'Partial outage' };
 }
 
-export function buildDailyBars(monitor) {
+export function buildDailyBars(monitor: Monitor): DailyBar[] {
   const todayStart = Math.floor(Date.now() / DAY_MS) * DAY_MS;
   const createdMs = (monitor.create_datetime || 0) * 1000;
   const downLogs = (monitor.logs || []).filter((l) => l.type === 1);
-  const bars = [];
+  const bars: DailyBar[] = [];
 
   for (let i = HISTORY_DAYS - 1; i >= 0; i--) {
     const dayStart = todayStart - i * DAY_MS;
@@ -83,7 +139,7 @@ export function buildDailyBars(monitor) {
       downSec += overlap / 1000;
     }
 
-    let cls;
+    let cls: BarClass;
     if (downSec === 0) cls = 'up';
     else if (downSec < 300) cls = 'partial';
     else cls = 'down';
@@ -93,8 +149,8 @@ export function buildDailyBars(monitor) {
   return bars;
 }
 
-export function formatRatio(value) {
-  const n = parseFloat(value);
+export function formatRatio(value: string | undefined): string {
+  const n = parseFloat(value ?? '');
   if (!Number.isFinite(n)) return '—';
   if (n >= 99.995) return '100%';
   return `${n.toFixed(2)}%`;

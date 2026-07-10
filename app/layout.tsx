@@ -1,8 +1,11 @@
+import type { Metadata, Viewport } from 'next';
+import type { ReactNode } from 'react';
 import { Analytics } from '@vercel/analytics/next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import { Noto_Sans_JP, Noto_Sans_TC } from 'next/font/google';
 import './globals.css';
+import type { Locale } from '@/lib/i18n';
 import { getLocale } from '@/lib/locale';
 
 const notoSansTC = Noto_Sans_TC({
@@ -19,14 +22,14 @@ const notoSansJP = Noto_Sans_JP({
   variable: '--font-noto-sans-jp',
 });
 
-const HTML_LANG = {
+const HTML_LANG: Record<Locale, string> = {
   'zh-Hant': 'zh-Hant',
   yue: 'yue-Hant-HK',
   en: 'en',
   ja: 'ja',
 };
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL('https://status.furcdn.us'),
   title: 'FurCDN Status',
   description: 'FurCDN 服務即時狀態 — Real-time service status powered by UptimeRobot.',
@@ -53,7 +56,7 @@ const websiteJsonLd = {
   },
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -61,7 +64,11 @@ export const viewport = {
   colorScheme: 'dark',
 };
 
-export default async function RootLayout({ children }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const locale = await getLocale();
   return (
     <html

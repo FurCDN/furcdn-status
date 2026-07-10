@@ -2,15 +2,21 @@
 
 import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
+import type { BarClass, DailyBar } from '@/lib/uptimerobot';
 
-const barColors = {
+const barColors: Record<BarClass, string> = {
   up: 'bg-emerald-500',
   down: 'bg-red-500',
   partial: 'bg-amber-500',
   na: 'bg-zinc-800',
 };
 
-const verdicts = {
+interface Verdict {
+  text: string;
+  color: string;
+}
+
+const verdicts: Record<BarClass, Verdict> = {
   up: { text: 'No incidents reported', color: 'text-emerald-400' },
   partial: { text: 'Brief incident', color: 'text-amber-400' },
   down: { text: 'Outage detected', color: 'text-red-400' },
@@ -23,7 +29,7 @@ const dateFmt = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 });
 
-function formatDuration(sec) {
+function formatDuration(sec: number): string {
   if (sec < 60) return `${Math.round(sec)}s`;
   if (sec < 3600) {
     const m = Math.floor(sec / 60);
@@ -38,10 +44,24 @@ function formatDuration(sec) {
   return `${(sec / 86400).toFixed(1)}d`;
 }
 
-export function UptimeBars({ bars }) {
-  const [active, setActive] = useState(null);
-  const lastActiveRef = useRef(null);
-  const [snapshot, setSnapshot] = useState({ idx: null, leftPct: 0, txPct: -50 });
+interface Snapshot {
+  idx: number | null;
+  leftPct: number;
+  txPct: number;
+}
+
+interface UptimeBarsProps {
+  bars: DailyBar[];
+}
+
+export function UptimeBars({ bars }: UptimeBarsProps) {
+  const [active, setActive] = useState<number | null>(null);
+  const lastActiveRef = useRef<number | null>(null);
+  const [snapshot, setSnapshot] = useState<Snapshot>({
+    idx: null,
+    leftPct: 0,
+    txPct: -50,
+  });
 
   const total = bars.length;
 

@@ -1,28 +1,54 @@
-export const LOCALES = ['zh-Hant', 'yue', 'en', 'ja'];
-export const DEFAULT_LOCALE = 'zh-Hant';
+export const LOCALES = ['zh-Hant', 'yue', 'en', 'ja'] as const;
+export type Locale = (typeof LOCALES)[number];
 
-export const LOCALE_LABELS = {
+export const DEFAULT_LOCALE: Locale = 'zh-Hant';
+
+export const LOCALE_LABELS: Record<Locale, string> = {
   'zh-Hant': '繁體中文',
   yue: '粵語',
   en: 'English',
   ja: '日本語',
 };
 
-export const INTL_LOCALES = {
+export const INTL_LOCALES: Record<Locale, string> = {
   'zh-Hant': 'zh-Hant',
   yue: 'zh-Hant-HK',
   en: 'en-US',
   ja: 'ja-JP',
 };
 
-export const DATE_LOCALES = {
+export const DATE_LOCALES: Record<Locale, string> = {
   'zh-Hant': 'en-US',
   yue: 'en-US',
   en: 'en-US',
   ja: 'ja-JP',
 };
 
-const dictionaries = {
+export interface Dict {
+  overall: {
+    up: string;
+    down_partial: string;
+    down_major: string;
+    paused: string;
+    unable: string;
+  };
+  monitor: Record<
+    'Operational' | 'Degraded' | 'Down' | 'Paused' | 'Pending' | 'Unknown',
+    string
+  >;
+  noMonitors: string;
+  eventsTitle: string;
+  daysAgo: (n: number) => string;
+  today: string;
+  days: (n: number) => string;
+  autoRefresh: (s: number) => string;
+  poweredBy: string;
+  drivenBy: string;
+  copyright: string;
+  langMenuLabel: string;
+}
+
+const dictionaries: Record<Locale, Dict> = {
   'zh-Hant': {
     overall: {
       up: '所有系統運作正常',
@@ -133,11 +159,11 @@ const dictionaries = {
   },
 };
 
-export function getDict(locale) {
+export function getDict(locale: Locale): Dict {
   return dictionaries[locale] || dictionaries[DEFAULT_LOCALE];
 }
 
-export function normalizeLocale(raw) {
+export function normalizeLocale(raw: string | null | undefined): Locale | null {
   if (!raw) return null;
   const lower = raw.toLowerCase();
   if (lower.startsWith('yue') || lower === 'zh-hk' || lower.startsWith('zh-hk-')) {
@@ -149,7 +175,9 @@ export function normalizeLocale(raw) {
   return null;
 }
 
-export function pickLocaleFromAcceptLanguage(header) {
+export function pickLocaleFromAcceptLanguage(
+  header: string | null | undefined,
+): Locale | null {
   if (!header) return null;
   const entries = header
     .split(',')
