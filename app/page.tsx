@@ -160,7 +160,6 @@ export default async function StatusPage() {
           {t.copyright}
         </p>
         <p>
-          {t.drivenBy}{' '}
           <a
             href="https://t.me/FurCDN"
             target="_blank"

@@ -43,7 +43,6 @@ export interface Dict {
   days: (n: number) => string;
   autoRefresh: (s: number) => string;
   poweredBy: string;
-  drivenBy: string;
   copyright: string;
   langMenuLabel: string;
   tgChannel: string;
@@ -73,7 +72,6 @@ const dictionaries: Record<Locale, Dict> = {
     days: (n) => `${n} 天`,
     autoRefresh: (s) => `自動更新 ${s} 秒`,
     poweredBy: '技術支援',
-    drivenBy: '驅動',
     copyright: '版權所有',
     langMenuLabel: '語言',
     tgChannel: 'Telegram 頻道 @FurCDN（更即時的訊息）',
@@ -101,7 +99,6 @@ const dictionaries: Record<Locale, Dict> = {
     days: (n) => `${n} 日`,
     autoRefresh: (s) => `自動更新 ${s} 秒`,
     poweredBy: '技術支援',
-    drivenBy: '驅動',
     copyright: '版權所有',
     langMenuLabel: '語言',
     tgChannel: 'Telegram 頻道 @FurCDN（即時消息）',
@@ -129,7 +126,6 @@ const dictionaries: Record<Locale, Dict> = {
     days: (n) => `${n}d`,
     autoRefresh: (s) => `auto-refresh ${s}s`,
     poweredBy: 'Powered by',
-    drivenBy: 'Driven by',
     copyright: 'All rights reserved.',
     langMenuLabel: 'Language',
     tgChannel: 'Telegram channel @FurCDN (real-time updates)',
@@ -157,7 +153,6 @@ const dictionaries: Record<Locale, Dict> = {
     days: (n) => `${n}日`,
     autoRefresh: (s) => `自動更新 ${s}秒`,
     poweredBy: 'Powered by',
-    drivenBy: 'Driven by',
     copyright: 'All rights reserved.',
     langMenuLabel: '言語',
     tgChannel: 'Telegram チャンネル @FurCDN（リアルタイム更新）',
