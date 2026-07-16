@@ -46,6 +46,7 @@ export interface Dict {
   drivenBy: string;
   copyright: string;
   langMenuLabel: string;
+  tgChannel: string;
 }
 
 const dictionaries: Record<Locale, Dict> = {
@@ -75,6 +76,7 @@ const dictionaries: Record<Locale, Dict> = {
     drivenBy: '驅動',
     copyright: '版權所有',
     langMenuLabel: '語言',
+    tgChannel: 'Telegram 頻道 @FurCDN（更即時的訊息）',
   },
   yue: {
     overall: {
@@ -102,6 +104,7 @@ const dictionaries: Record<Locale, Dict> = {
     drivenBy: '驅動',
     copyright: '版權所有',
     langMenuLabel: '語言',
+    tgChannel: 'Telegram 頻道 @FurCDN（即時消息）',
   },
   en: {
     overall: {
@@ -129,6 +132,7 @@ const dictionaries: Record<Locale, Dict> = {
     drivenBy: 'Driven by',
     copyright: 'All rights reserved.',
     langMenuLabel: 'Language',
+    tgChannel: 'Telegram channel @FurCDN (real-time updates)',
   },
   ja: {
     overall: {
@@ -156,6 +160,7 @@ const dictionaries: Record<Locale, Dict> = {
     drivenBy: 'Driven by',
     copyright: 'All rights reserved.',
     langMenuLabel: '言語',
+    tgChannel: 'Telegram チャンネル @FurCDN（リアルタイム更新）',
   },
 };
 

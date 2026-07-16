@@ -162,12 +162,12 @@ export default async function StatusPage() {
         <p>
           {t.drivenBy}{' '}
           <a
-            href="https://langya.io"
+            href="https://t.me/FurCDN"
             target="_blank"
             rel="noopener noreferrer"
             className="link-underline font-medium text-zinc-300"
           >
-            langya.io
+            {t.tgChannel}
           </a>
         </p>
         <div className="mt-2">
