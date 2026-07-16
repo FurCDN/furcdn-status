@@ -16,6 +16,22 @@ export interface LocalizedEvent {
 
 export const events: RawEvent[] = [
   {
+    date: '2026-07-15',
+    title: {
+      'zh-Hant': '遭受 CC 攻擊',
+      yue: '遭受 CC 攻擊',
+      en: 'CC attack incident',
+      ja: 'CC 攻撃を受けました',
+    },
+    description: {
+      'zh-Hant':
+        '我們控制面板遭受 100M+ CC 攻擊，停機約 1 小時，已接入的網站不受影響。',
+      yue: '我哋嘅控制面板遭受 100M+ CC 攻擊，停機大約 1 個鐘，已經接入嘅網站唔受影響。',
+      en: 'Our control panel was hit by a 100M+ CC attack. About 1 hour of downtime; onboarded sites were not affected.',
+      ja: 'コントロールパネルが 100M+ の CC 攻撃を受けました。ダウンタイムは約 1 時間で、既に接続済みのサイトには影響ありません。',
+    },
+  },
+  {
     date: '2026-07-09',
     title: {
       'zh-Hant': 'OVH 獨服維護導致停機',
