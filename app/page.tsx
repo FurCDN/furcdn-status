@@ -153,9 +153,9 @@ export default async function StatusPage() {
           {t.autoRefresh(REFRESH_SECONDS)}
         </p>
         <p>
-          © 2023-2026{' '}
+          © 2026{' '}
           <span className="font-medium text-zinc-300">
-            SLOWSPEED NETWORK LLC.
+            Taipei101 Network
           </span>{' '}
           {t.copyright}
         </p>
