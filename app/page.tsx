@@ -154,9 +154,14 @@ export default async function StatusPage() {
         </p>
         <p>
           © 2022-2026{' '}
-          <span className="font-medium text-zinc-300">
+          <a
+            href="https://taipei101.llc/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link-underline font-medium text-zinc-300"
+          >
             Taipei101 Network
-          </span>{' '}
+          </a>{' '}
           {t.copyright}
         </p>
         <p>
