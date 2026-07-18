@@ -153,7 +153,7 @@ export default async function StatusPage() {
           {t.autoRefresh(REFRESH_SECONDS)}
         </p>
         <p>
-          © 2026{' '}
+          © 2022-2026{' '}
           <span className="font-medium text-zinc-300">
             Taipei101 Network
           </span>{' '}
