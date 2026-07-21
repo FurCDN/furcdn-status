@@ -16,6 +16,21 @@ export interface LocalizedEvent {
 
 export const events: RawEvent[] = [
   {
+    date: '2026-07-21',
+    title: {
+      'zh-Hant': '系統升級',
+      yue: '系統升級',
+      en: 'System upgrade',
+      ja: 'システムアップグレード',
+    },
+    description: {
+      'zh-Hant': '此次系統升級停機時間爲 10 分鐘，已接入的網站不受影響。',
+      yue: '今次系統升級停機大約 10 分鐘，已經接入嘅網站唔受影響。',
+      en: 'System upgrade caused 10 minutes of downtime. Onboarded sites were not affected.',
+      ja: '今回のシステムアップグレードによるダウンタイムは 10 分間で、既に接続済みのサイトには影響ありません。',
+    },
+  },
+  {
     date: '2026-07-15',
     title: {
       'zh-Hant': '遭受 CC 攻擊',
