@@ -164,6 +164,9 @@ export default async function StatusPage() {
           </a>{' '}
           {t.copyright}
         </p>
+        <p className="text-zinc-500">
+          9900 Corporate Campus Dr Ste 3000, Louisville, KY 40223, United States
+        </p>
         <p>
           <a
             href="https://t.me/FurCDN"
