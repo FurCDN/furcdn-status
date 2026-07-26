@@ -124,7 +124,7 @@ export default async function StatusPage() {
                   <span className="text-sm text-zinc-100">{ev.title}</span>
                   <time
                     dateTime={ev.date}
-                    className="shrink-0 font-mono text-[11px] text-zinc-500"
+                    className="shrink-0 font-mono text-[11px] text-white"
                   >
                     {eventDateFmt.format(new Date(`${ev.date}T00:00:00`))}
                   </time>
