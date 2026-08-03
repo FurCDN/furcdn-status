@@ -16,6 +16,22 @@ export interface LocalizedEvent {
 
 export const events: RawEvent[] = [
   {
+    date: '2026-08-04',
+    title: {
+      'zh-Hant': '部分節點短暫中斷',
+      yue: '部分節點短暫中斷',
+      en: 'Brief outage on some nodes',
+      ja: '一部ノードの短時間停止',
+    },
+    description: {
+      'zh-Hant':
+        '同步上游防火牆規則更新導致部分節點中斷約 3 分鐘，已接入的網站不受影響。',
+      yue: '同步上游防火牆規則更新令部分節點中斷咗大約 3 分鐘，已經接入嘅網站唔受影響。',
+      en: 'Syncing an upstream firewall rule update caused about 3 minutes of downtime on some nodes. Onboarded sites were not affected.',
+      ja: '上流ファイアウォールルールの更新を同期した際に、一部のノードで約 3 分間の停止が発生しました。既に接続済みのサイトには影響ありません。',
+    },
+  },
+  {
     date: '2026-07-26',
     title: {
       'zh-Hant': '系統升級',
