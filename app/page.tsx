@@ -44,15 +44,6 @@ const OVERALL_KEY: Record<OverallText, keyof Dict['overall']> = {
   'Partial outage': 'down_partial',
 };
 
-function cleanHost(url: string | undefined): string | null {
-  if (!url) return null;
-  try {
-    return new URL(url).host;
-  } catch {
-    return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-  }
-}
-
 interface Overall {
   cls: StatusClass;
   text: string;
@@ -196,7 +187,6 @@ function MonitorRow({ monitor, t }: MonitorRowProps) {
   const ratios = (monitor.custom_uptime_ratio || '').split('-');
   const r30 = formatRatio(ratios[2]);
   const r90 = formatRatio(ratios[3]);
-  const host = cleanHost(monitor.url);
   const statusText = t.monitor[s.text] || s.text;
 
   return (
@@ -206,11 +196,6 @@ function MonitorRow({ monitor, t }: MonitorRowProps) {
           <div className="truncate text-sm text-zinc-100">
             {monitor.friendly_name || `Monitor ${monitor.id}`}
           </div>
-          {host && (
-            <div className="mt-0.5 truncate font-mono text-[11px] text-zinc-500">
-              {host}
-            </div>
-          )}
         </div>
         <span className={clsx('shrink-0 pt-0.5 text-xs', statusTextColors[s.cls])}>
           {statusText}
