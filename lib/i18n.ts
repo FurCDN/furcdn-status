@@ -45,6 +45,7 @@ export interface Dict {
   poweredBy: string;
   copyright: string;
   langMenuLabel: string;
+  loading: string;
   tgChannel: string;
   monitorsTitle: string;
   upOfTotal: (up: number, total: number) => string;
@@ -89,6 +90,7 @@ const dictionaries: Record<Locale, Dict> = {
     poweredBy: '技術支援',
     copyright: '版權所有',
     langMenuLabel: '語言',
+    loading: '載入中',
     tgChannel: 'Telegram 頻道 @FurCDN（更即時的訊息）',
     monitorsTitle: '監控項目',
     upOfTotal: (up, total) => `${up}/${total} 項正常`,
@@ -131,6 +133,7 @@ const dictionaries: Record<Locale, Dict> = {
     poweredBy: '技術支援',
     copyright: '版權所有',
     langMenuLabel: '語言',
+    loading: '載入緊',
     tgChannel: 'Telegram 頻道 @FurCDN（即時消息）',
     monitorsTitle: '監控項目',
     upOfTotal: (up, total) => `${up}/${total} 項正常`,
@@ -173,6 +176,7 @@ const dictionaries: Record<Locale, Dict> = {
     poweredBy: 'Powered by',
     copyright: 'All rights reserved.',
     langMenuLabel: 'Language',
+    loading: 'Loading',
     tgChannel: 'Telegram channel @FurCDN (real-time updates)',
     monitorsTitle: 'Monitors',
     upOfTotal: (up, total) => `${up}/${total} operational`,
@@ -215,6 +219,7 @@ const dictionaries: Record<Locale, Dict> = {
     poweredBy: 'Powered by',
     copyright: 'All rights reserved.',
     langMenuLabel: '言語',
+    loading: '読み込み中',
     tgChannel: 'Telegram チャンネル @FurCDN（リアルタイム更新）',
     monitorsTitle: '監視項目',
     upOfTotal: (up, total) => `${up}/${total} 正常`,

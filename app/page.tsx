@@ -127,7 +127,11 @@ export default async function StatusPage() {
           <h1 className="truncate text-sm font-medium text-zinc-100">FurCDN Status</h1>
           <UpdatedTime iso={updatedIso} locale={locale} label={t.updatedLabel} />
         </div>
-        <LanguageSwitcher current={locale} label={t.langMenuLabel} />
+        <LanguageSwitcher
+          current={locale}
+          label={t.langMenuLabel}
+          loadingLabel={t.loading}
+        />
       </header>
 
       <section

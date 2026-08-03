@@ -54,6 +54,42 @@ body {
   animation: collapse-up 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Arc spinner timing lifted from Cloudflare's new status page. */
+@keyframes loader-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader-arc {
+  0% {
+    stroke-dasharray: 0 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 42 150;
+    stroke-dashoffset: -16;
+  }
+  100% {
+    stroke-dasharray: 42 150;
+    stroke-dashoffset: -59;
+  }
+}
+.loader-spin {
+  animation: loader-rotate 2s linear infinite;
+}
+.loader-arc {
+  animation: loader-arc 1.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .loader-spin {
+    animation-duration: 4s;
+  }
+  .loader-arc {
+    animation: none;
+    stroke-dasharray: 42 150;
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
