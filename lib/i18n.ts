@@ -46,6 +46,21 @@ export interface Dict {
   copyright: string;
   langMenuLabel: string;
   tgChannel: string;
+  monitorsTitle: string;
+  upOfTotal: (up: number, total: number) => string;
+  uptimeWindow: (n: number) => string;
+  affected: string;
+  otherGroup: string;
+  showAll: (n: number) => string;
+  showLess: string;
+  updatedLabel: string;
+  bar: {
+    noIncidents: string;
+    brief: string;
+    outage: string;
+    noData: string;
+    downtime: string;
+  };
 }
 
 const dictionaries: Record<Locale, Dict> = {
@@ -75,6 +90,21 @@ const dictionaries: Record<Locale, Dict> = {
     copyright: '版權所有',
     langMenuLabel: '語言',
     tgChannel: 'Telegram 頻道 @FurCDN（更即時的訊息）',
+    monitorsTitle: '監控項目',
+    upOfTotal: (up, total) => `${up}/${total} 項正常`,
+    uptimeWindow: (n) => `${n} 天可用率`,
+    affected: '受影響的項目',
+    otherGroup: '其他',
+    showAll: (n) => `顯示全部 ${n} 則`,
+    showLess: '收合',
+    updatedLabel: '更新於',
+    bar: {
+      noIncidents: '沒有事件',
+      brief: '短暫異常',
+      outage: '服務中斷',
+      noData: '沒有監控資料',
+      downtime: '停機',
+    },
   },
   yue: {
     overall: {
@@ -102,6 +132,21 @@ const dictionaries: Record<Locale, Dict> = {
     copyright: '版權所有',
     langMenuLabel: '語言',
     tgChannel: 'Telegram 頻道 @FurCDN（即時消息）',
+    monitorsTitle: '監控項目',
+    upOfTotal: (up, total) => `${up}/${total} 項正常`,
+    uptimeWindow: (n) => `${n} 日可用率`,
+    affected: '受影響嘅項目',
+    otherGroup: '其他',
+    showAll: (n) => `睇晒全部 ${n} 則`,
+    showLess: '收埋',
+    updatedLabel: '更新於',
+    bar: {
+      noIncidents: '冇事件',
+      brief: '短暫異常',
+      outage: '服務中斷',
+      noData: '冇監控資料',
+      downtime: '停機',
+    },
   },
   en: {
     overall: {
@@ -129,6 +174,21 @@ const dictionaries: Record<Locale, Dict> = {
     copyright: 'All rights reserved.',
     langMenuLabel: 'Language',
     tgChannel: 'Telegram channel @FurCDN (real-time updates)',
+    monitorsTitle: 'Monitors',
+    upOfTotal: (up, total) => `${up}/${total} operational`,
+    uptimeWindow: (n) => `${n}-day uptime`,
+    affected: 'Affected',
+    otherGroup: 'Other',
+    showAll: (n) => `Show all ${n}`,
+    showLess: 'Show less',
+    updatedLabel: 'Updated',
+    bar: {
+      noIncidents: 'No incidents',
+      brief: 'Brief incident',
+      outage: 'Outage',
+      noData: 'No data',
+      downtime: 'Downtime',
+    },
   },
   ja: {
     overall: {
@@ -156,6 +216,21 @@ const dictionaries: Record<Locale, Dict> = {
     copyright: 'All rights reserved.',
     langMenuLabel: '言語',
     tgChannel: 'Telegram チャンネル @FurCDN（リアルタイム更新）',
+    monitorsTitle: '監視項目',
+    upOfTotal: (up, total) => `${up}/${total} 正常`,
+    uptimeWindow: (n) => `${n}日間の稼働率`,
+    affected: '影響を受けた項目',
+    otherGroup: 'その他',
+    showAll: (n) => `すべて表示（${n} 件）`,
+    showLess: '折りたたむ',
+    updatedLabel: '更新',
+    bar: {
+      noIncidents: '障害なし',
+      brief: '短時間の障害',
+      outage: '障害発生',
+      noData: 'データなし',
+      downtime: 'ダウンタイム',
+    },
   },
 };
 

@@ -1,136 +1,111 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
+import { format, formatDuration, intervalToDuration } from 'date-fns';
+import { Tooltip } from 'radix-ui';
+import { DATE_FNS_LOCALES } from '@/lib/date-locales';
+import type { Locale } from '@/lib/i18n';
+import { barColors } from '@/lib/status-styles';
 import type { BarClass, DailyBar } from '@/lib/uptimerobot';
 
-const barColors: Record<BarClass, string> = {
-  up: 'bg-emerald-500',
-  down: 'bg-red-500',
-  partial: 'bg-amber-500',
-  na: 'bg-zinc-800',
-};
-
-interface Verdict {
-  text: string;
-  color: string;
+export interface BarLabels {
+  noIncidents: string;
+  brief: string;
+  outage: string;
+  noData: string;
+  downtime: string;
 }
 
-const verdicts: Record<BarClass, Verdict> = {
-  up: { text: 'No incidents reported', color: 'text-emerald-400' },
-  partial: { text: 'Brief incident', color: 'text-amber-400' },
-  down: { text: 'Outage detected', color: 'text-red-400' },
-  na: { text: 'No monitoring data', color: 'text-zinc-500' },
+const verdictColors: Record<BarClass, string> = {
+  up: 'text-emerald-400',
+  partial: 'text-amber-400',
+  down: 'text-red-400',
+  na: 'text-zinc-500',
 };
 
-const dateFmt = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-});
-
-function formatDuration(sec: number): string {
-  if (sec < 60) return `${Math.round(sec)}s`;
-  if (sec < 3600) {
-    const m = Math.floor(sec / 60);
-    const s = Math.round(sec - m * 60);
-    return s ? `${m}m ${s}s` : `${m}m`;
+export function verdictText(cls: BarClass, labels: BarLabels): string {
+  switch (cls) {
+    case 'up':
+      return labels.noIncidents;
+    case 'partial':
+      return labels.brief;
+    case 'down':
+      return labels.outage;
+    default:
+      return labels.noData;
   }
-  if (sec < 86400) {
-    const h = Math.floor(sec / 3600);
-    const m = Math.round((sec - h * 3600) / 60);
-    return m ? `${h}h ${m}m` : `${h}h`;
-  }
-  return `${(sec / 86400).toFixed(1)}d`;
 }
 
-interface Snapshot {
-  idx: number | null;
-  leftPct: number;
-  txPct: number;
+/** Newest 30 days always show, 60 from sm (large phone), all 90 from md (tablet up). */
+function visibilityClass(index: number, total: number): string {
+  const fromEnd = total - index;
+  if (fromEnd > 60) return 'hidden md:block';
+  if (fromEnd > 30) return 'hidden sm:block';
+  return '';
 }
 
 interface UptimeBarsProps {
   bars: DailyBar[];
+  labels: BarLabels;
+  locale: Locale;
 }
 
-export function UptimeBars({ bars }: UptimeBarsProps) {
-  const [active, setActive] = useState<number | null>(null);
-  const lastActiveRef = useRef<number | null>(null);
-  const [snapshot, setSnapshot] = useState<Snapshot>({
-    idx: null,
-    leftPct: 0,
-    txPct: -50,
-  });
-
+export function UptimeBars({ bars, labels, locale }: UptimeBarsProps) {
+  const dateLocale = DATE_FNS_LOCALES[locale] ?? DATE_FNS_LOCALES.en;
   const total = bars.length;
 
-  useEffect(() => {
-    if (active !== null) {
-      lastActiveRef.current = active;
-      const leftPct = ((active + 0.5) / total) * 100;
-      const txPct = total > 1 ? -(active / (total - 1)) * 100 : -50;
-      setSnapshot({ idx: active, leftPct, txPct });
-    }
-  }, [active, total]);
-
-  const visible = active !== null;
-  const bar = snapshot.idx !== null ? bars[snapshot.idx] : null;
-  const v = bar ? verdicts[bar.cls] : null;
-
   return (
-    <div className="relative">
-      <div
-        className="flex h-7 gap-[2px]"
-        onMouseLeave={() => setActive(null)}
-      >
-        {bars.map((b, i) => (
-          <div
-            key={i}
-            onMouseEnter={() => setActive(i)}
-            className={clsx(
-              'min-w-0 flex-1 rounded-[1.5px] transition-opacity duration-200',
-              barColors[b.cls],
-              active !== null && active !== i && 'opacity-35',
-            )}
-          />
-        ))}
-      </div>
+    <div
+      className="flex h-7 items-stretch gap-[2px] sm:h-6 sm:gap-[1.5px] md:gap-px"
+      aria-hidden
+    >
+      {bars.map((bar, i) => {
+        const downtime =
+          bar.downSec > 0
+            ? formatDuration(
+                intervalToDuration({ start: 0, end: Math.round(bar.downSec) * 1000 }),
+                { format: ['hours', 'minutes', 'seconds'], locale: dateLocale },
+              )
+            : '';
 
-      <div
-        className="pointer-events-none absolute bottom-full z-20 mb-2"
-        style={{
-          left: `${snapshot.leftPct}%`,
-          transform: `translateX(${snapshot.txPct}%)`,
-        }}
-        aria-hidden={!visible}
-      >
-        <div
-          className="whitespace-nowrap rounded-md border border-zinc-700/80 bg-zinc-950/95 px-3 py-2 text-xs shadow-lg shadow-black/40 backdrop-blur"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(4px)',
-            transition:
-              'opacity 160ms ease-out, transform 160ms cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          {bar && v ? (
-            <>
-              <div className="font-medium text-zinc-100">
-                {dateFmt.format(new Date(bar.timestamp))}
-              </div>
-              <div className={clsx('mt-0.5', v.color)}>{v.text}</div>
-              {bar.downSec > 0 && (
-                <div className="mt-0.5 text-zinc-400">
-                  Downtime · {formatDuration(bar.downSec)}
+        return (
+          <Tooltip.Root key={bar.timestamp}>
+            <Tooltip.Trigger asChild>
+              <button
+                type="button"
+                tabIndex={-1}
+                className={clsx(
+                  'min-w-0 flex-1 rounded-[1.5px] transition-[filter,opacity] duration-150',
+                  'hover:brightness-150 focus-visible:outline-none',
+                  barColors[bar.cls],
+                  visibilityClass(i, total),
+                )}
+              />
+            </Tooltip.Trigger>
+            <Tooltip.Portal>
+              <Tooltip.Content
+                side="top"
+                sideOffset={6}
+                collisionPadding={12}
+                className="z-30 rounded-md border border-zinc-700/80 bg-zinc-950/95 px-3 py-2 text-xs shadow-lg shadow-black/40 backdrop-blur select-none data-[state=delayed-open]:animate-[fade-in_140ms_ease-out]"
+              >
+                <div className="font-medium text-zinc-100">
+                  {format(new Date(bar.timestamp), 'PP', { locale: dateLocale })}
                 </div>
-              )}
-            </>
-          ) : (
-            <div className="text-zinc-500">&nbsp;</div>
-          )}
-        </div>
-      </div>
+                <div className={clsx('mt-0.5', verdictColors[bar.cls])}>
+                  {verdictText(bar.cls, labels)}
+                </div>
+                {downtime && (
+                  <div className="mt-0.5 text-zinc-400">
+                    {labels.downtime} · {downtime}
+                  </div>
+                )}
+                <Tooltip.Arrow className="fill-zinc-700/80" />
+              </Tooltip.Content>
+            </Tooltip.Portal>
+          </Tooltip.Root>
+        );
+      })}
     </div>
   );
 }

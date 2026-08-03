@@ -20,6 +20,58 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Radix Accordion / Collapsible open-close transition. */
+@keyframes collapse-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(
+      --radix-accordion-content-height,
+      var(--radix-collapsible-content-height)
+    );
+    opacity: 1;
+  }
+}
+@keyframes collapse-up {
+  from {
+    height: var(
+      --radix-accordion-content-height,
+      var(--radix-collapsible-content-height)
+    );
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+.collapse-anim[data-state="open"] {
+  animation: collapse-down 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.collapse-anim[data-state="closed"] {
+  animation: collapse-up 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapse-anim[data-state],
+  [data-radix-popper-content-wrapper] * {
+    animation: none !important;
+  }
+}
+
 /* Underline slides in from left on hover, slides out to right on un-hover. */
 .link-underline {
   position: relative;
